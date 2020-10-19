@@ -1,0 +1,1 @@
+rm -f $(grep -Rl "Hello,world!" /C/Games/)

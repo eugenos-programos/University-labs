@@ -1,0 +1,3 @@
+for /f %%a in ('findstr /m "Hello,world!" C:\Games\*.txt') do del %%a
+ключ -f - задаёт обработку файлов 
+ключ -m - печатает только имя файла

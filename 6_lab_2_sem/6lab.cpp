@@ -41,40 +41,40 @@ queque* add_to_the_end(queque* end, int data) {
 }
 
 void view_from_begin(queque* begin) {
-    if (begin == NULL) { std::cout << "Empty queque;\n"; return; }
-    else {
 
         queque* tmp = begin;
 
         std::cout << "Head->";
 
         while (tmp != NULL) { std::cout << "|" << tmp->data << "|"; tmp = tmp->next; }
+
         std::cout << "<-End;\n";
-    }
+
 }
 
 
 void view_from_end(queque* end) {
-    queque* tmp = end;
-    if (tmp == NULL) { std::cout << "Empty queque;\n"; return; }
-    else {
+        queque* tmp = end;
+
         std::cout << "End->";
         while (tmp != NULL) { std::cout << "|" << tmp->data << "|"; tmp = tmp->prev; }
         std::cout << "<-Head;\n";
-    }
+
 }
 
 
 queque* ind_zad(queque* begin, queque* end) {
     queque* tmp = begin;
+    queque* tmp1 = end;
     while (tmp != NULL) {
         if ((tmp->next == NULL) && (tmp->data % 2 != 0)) return begin;
         do {
             if ((tmp == begin) && (tmp->data % 2 == 0)) {
+                std::cout << "1";
                 if (tmp->next == NULL) {
                     queque* delete_node = tmp;
                     free(tmp);
-                    begin = end = NULL;
+                    std::cout << "1*";
                     return NULL;
                 }
                 queque* delete_node = tmp->next;
@@ -84,8 +84,22 @@ queque* ind_zad(queque* begin, queque* end) {
                 free(delete_node);
             }
         } while (tmp->data % 2 == 0);
+        do{
+            if (tmp == tmp1) { std::cout << "!!!!!";  return begin; }
+            if ((tmp1->data % 2) == 0) {
+                std::cout << "2";
+                queque* delete_node = tmp1;
+                tmp1->data = tmp1->prev->data;
+                tmp1->prev = tmp1->prev->prev;
+                tmp1->next = NULL;
+                free(delete_node);
+                view_from_begin(begin);
+            }
+        } while ((tmp1->data % 2) == 0);
+        if (tmp == tmp1) { std::cout << "!!!!!";  return begin; }
         do {
             if ((tmp->next != NULL) && (tmp->next->data % 2 == 0)) {
+                std::cout << "3";
                 queque* delete_node = tmp->next;
                 tmp->next->prev = tmp;
                 tmp->next = tmp->next->next;
@@ -117,12 +131,34 @@ int main()
             int tmp_choose;
             std::cout << "1 - begin,2 - end\n";
             std::cin >> tmp_choose;
-            if (tmp_choose == 1) { std::cout << "\n____QUEQUE____\n"; view_from_begin(begin); std::cout << std::endl; }
-            if (tmp_choose == 2) { std::cout << "\n____QUEQUE____\n"; view_from_end(end); std::cout << std::endl; }
+            if (tmp_choose == 1) {
+                if (begin == NULL) std::cout << "Empty queque;\n"; 
+                else {
+                    std::cout << "\n____QUEQUE____\n";
+                    view_from_begin(begin);
+                    std::cout << std::endl;
+                }
+            }
+            if (tmp_choose == 2) { 
+                if (begin == NULL) std::cout << "Empty queque;\n";
+                else {
+                    std::cout << "\n____QUEQUE____\n";
+                    view_from_end(end);
+                    std::cout << std::endl;
+                }
+            }
         }
         else if (num == 3) {
-            begin = ind_zad(begin, end);
-            std::cout << "\n____QUEQUE____\n"; view_from_begin(begin); std::cout << std::endl;
+            begin = ind_zad(begin,end);
+            if (begin == NULL) {
+                std::cout << "Empty queque;\n"; 
+                continue;
+            }
+            if (begin->next == NULL) end = begin;
+            std::cout << "\n____QUEQUE____\n";
+            view_from_begin(begin);
+            std::cout << std::endl;
+        
         }
         else if (num == 4) {
             int data;

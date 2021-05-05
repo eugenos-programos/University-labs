@@ -1,0 +1,255 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{cmap}
+\usepackage{indentfirst}
+\usepackage[warn]{mathtext}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[argument]{graphicx}
+\usepackage{tikz}  
+\usetikzlibrary{graphs}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{amscd}
+\usepackage{longtable}
+\usepackage[russian,english]{babel}
+\usepackage{indentfirst}
+\usepackage[left=1cm,right=1cm,top=2cm,bottom=2cm,bindingoffset=0cm]{geometry}
+\author{Министерство образования Республики Беларусь \\ \\
+
+Учреждение образования \\
+“Белорусский государственный университет \\
+информатики и радиоэлектроники” \\ \\ 
+
+Факультет информационных технологий и управления \\ 
+Кафедра интеллектуальных информационных технологий \\
+ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \Large{\textbf{РАСЧЁТНАЯ РАБОТА}} \\ \Large{по дисциплине «Традиционные и интеллектуальные информационные \\ технологии» \\
+на тему \\
+\textbf{«Задача нахождения обхвата орграфа»}}
+ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\}
+\date{\begin{flushleft}
+Выполнил (Самчук Е.А.) \\ студент группы \\ 021703 \\
+Проверил (Юрков А.А.)
+\end{flushleft}Минск 2021}
+\begin{document}
+
+\maketitle
+\begin{flushleft}
+\Large{\textbf{Цель:} Получить навыки формализации и обработки информации с \\ использованием семантических сетей.} \\
+\Large{\textbf{Задача: } Нахождение обхвата орграфа.} \\ \\ \\  \\
+\end{flushleft}
+\centering{\Large{\textbf{Список понятий}}} \\ \\  \\ \\
+\begin{flushleft}
+\large{1.Граф(Абсолютное понятие) - пара $G =$ [V,E],где $V$ - множество точек,называемых вершинами, и $E$ - множество линий,соединяющих данные точки(связки).}
+\end{flushleft}
+\includegraphics[width=14cm, height=8cm]{first.png} \\
+\textit{Рис.1.1.Граф} \\
+\begin{flushleft}
+2.Ориентированный граф(Абсолютное понятие) -  это такой граф, в котором все связки являются дугами. \\
+\end{flushleft}
+\includegraphics[width=14cm, height=8cm]{sec.png} \\ \textit{Рис.2.1.Ориентированный граф} \\ 
+\begin{flushleft}
+3.Ацикличный граф - граф,не имеющий ни одного цикла.(Цикл в орграфе - это последовательность вершин, начинающаяся и завершающаяся в той же самой вершине, и в этой последовательности для любых двух последовательных вершин существует дуга из более ранней в более позднюю.)
+\end{flushleft}
+\includegraphics[width=14cm, height=8cm]{third.png} \\
+\textit{Рис.3.1.Ацикличный ориентированный граф.}
+\begin{flushleft}
+\large{4.Цикличный граф - граф,в котором по крайней мере имеется хотя бы один цикл.}
+\end{flushleft}
+\includegraphics[width=14cm, height=8cm]{res_1.png} \\ \textit{Рис.4.1.Цикличный ориентированный граф.} \\
+\begin{flushleft}
+
+\large{5.Обхват орграфа - длина наименьшего цикла, содержащегося в данном графе. Если граф не содержит циклов (то есть является ациклическим графом), его обхват по определению равен бесконечности.(Длина цикла в орграфе - количестов дуг,содержащихся в цикле.) }\\ \\
+\end{flushleft}
+
+\begin{center}
+    \Large{\textbf{Тестовые примеры}}
+\end{center}
+\begin{flushleft}
+Во всех тестах графы будут приведены в сокращенной форме со скрытыми ролями элементов графа и будет требоваться найти обхват орграфа.
+\\ 
+\\
+\large{\textbf{Тест 1.}} \\
+\large{\textbf{Вход:}} \\
+Необходимо определить обхват орграфа. \\
+\end{flushleft} \\ 
+\includegraphics[width=12cm, height=6cm]{2_1.png} \\ \textit{Рис.2.1.Вход теста 1} \\
+\begin{flushleft}
+\large{\textbf{Выход:}} \\ 
+Был найден обхват орграфа - 4.
+\end{flushleft}
+\includegraphics[width=12cm, height=7cm]{2_2.png} \\ \textit{Рис.2.2.Выход теста 1} \\
+\begin{flushleft}
+\large{\textbf{Тест 2.}} \\
+\large{\textbf{Вход:}} \\
+Необходимо определить обхват орграфа. \\
+\end{flushleft} \\ 
+\includegraphics[width=12cm, height=7cm]{3_3.png} \\ \textit{Рис.2.3.Вход теста 2} \\
+\begin{flushleft}
+\large{\textbf{Выход:}} \\ 
+Был найден обхват орграфа - 3.
+\end{flushleft}
+\includegraphics[height=7cm]{3_1.png} \\ \textit{Рис.2.4.Выход теста 2} \\
+\begin{flushleft}
+\large{\textbf{Тест 3.}} \\
+\large{\textbf{Вход:}} \\
+Необходимо определить обхват орграфа. \\
+\end{flushleft} \\ 
+\includegraphics[width=12cm, height=7cm]{4_1.png} \\ \textit{Рис.2.4.Вход теста 3} \\
+\begin{flushleft}
+\large{\textbf{Выход:}} \\ 
+Был найден обхват орграфа - 5.
+\end{flushleft}
+\includegraphics[width=12cm, height=6cm]{4_2.png} \\ \textit{Рис.2.5.Выход теста 3} \\
+\begin{flushleft}
+\large{\textbf{Тест 4.}} \\
+\large{\textbf{Вход:}} \\
+Необходимо определить обхват орграфа. \\
+\end{flushleft} \\ 
+\includegraphics[width=12cm, height=6cm]{5_1.png} \\ \textit{Рис.2.6.Вход теста 4} \\
+\begin{flushleft}
+\large{\textbf{Выход:}} \\ 
+Был найден обхват орграфа - 3.
+\end{flushleft}
+\includegraphics[width=12cm, height=6cm]{5_2.png} \\ \textit{Рис.2.7.Выход теста 4} \\
+\begin{flushleft}
+\large{\textbf{Тест 5.}} \\
+\large{\textbf{Вход:}} \\
+Необходимо определить обхват орграфа. \\
+\end{flushleft} \\ 
+\includegraphics[width=12cm, height=9cm]{6_1.png} \\ \textit{Рис.2.7.Вход теста 5} \\
+\begin{flushleft}
+\large{\textbf{Выход:}} \\ 
+Был найден обхват орграфа - 3.
+\end{flushleft}
+\includegraphics[width=12cm, height=8cm]{6_2.png} \\ \textit{Рис.2.9.Выход теста 5} \\
+\begin{flushleft}
+\textbf{Алгоритм:}
+
+Для решения данной задачи использовались следующие переменные: 
+
+1.Множество,показывающее непосещённые вершины графа на локальном пути(0 обозначает,что вершина не была посещена,1 - была посещена)(color$\_$array). 
+
+2.Множество,состоящее из расстояний от вершины,из которого начали поиск в глубину,до всех вершин в данном локальном пути(distance$\_$array).
+
+3.Множество из всех непосещённых алгоритмом поиска в глубину вершин всеми путями из начала действия алгоритма(global$\_$color$\_$array).
+
+4.Множество,состоящее из размеров всех циклов в графе(cycle$\_$sizes).
+
+5.Вершина,в которой находится сейчас алгоритм(tmp$\_$located$\_$node).
+
+6.Расстояние которое прошёл алгоритм от точки начала до вершины в которой мы сейчас находимся(tmp$\_$size).
+
+
+
+\Large{\textbf{Описание алгоритма:}}\\
+\textbf{1.Нахождение всех циклов,проходяших через 0-ую вершину:} \\
+\quad 1.1. Алгоритм начинается с 0-ой вершины.(То есть (tmp$\_$located$\_$node) - 0,(tmp$\_$size) также равно 0,все вершины  в ( global$\_$color$\_$array) и (color$\_$array) обозначены как непосещённые) \\
+\quad 1.2. Помечаем вершину,в которой мы сейчас находимся (tmp$\_$located$\_$node), как посещённую('1') в ( global$\_$color$\_$array) и (color$\_$array). \\
+\quad 1.3. Если смежная с нашей вершиной вершина не посещена в (color$\_$array): \\
+\quad \quad 1.3.1. Заносим в (distance$\_$array) для данной смежной вершины значение (tmp$\_$size),увеличенное на 1. \\
+\quad \quad 1.3.2. Вызываем алгоритм с пункта 1.2.,только теперь (tmp$\_$located$\_$node) - уже смежная вершина,значения (color$\_$array),(distance$\_$array) глобально не изменяются.  \\
+\quad 1.4.Если вершина,смежная с данной(tmp$\_$located$\_$node) является посещённой,то цикл найден,заносим размер цикла((tmp$\_$size),увеличенное на 1 и от которого отняли соответствующее для вершины,в которую мы пришли,расстояние(хранится в (distance$\_$array))) в (cycle$\_$sizes). \\ 
+\textbf{2.Проверка наличия циклов,не проходящих через нулевую вершину:} \\
+\quad 2.1. Проверяем каждый элемент в ( global$\_$color$\_$array): \\
+\quad \quad 2.1.1. Если для соответсвующей вершины стоит значение посещённой('1'),то переходим к следующему элементу. \\
+\quad \quad 2.1.2. Если для соответсвующей вершины стоит значение не посещённой,то вызываем для данной вершины алгоритм 1.  \\
+\quad 2.2. Когда все вершины просмотрены,алгоритм 2 завершает работу. \\
+\textbf{Пример выполнения алгоритма в sc-памяти:} \\
+\textit{для наглядности примеры формализации переменных и их значений будут представлены в кратком виде (опуская отношение значение*).}\\
+1.Нахождение цикла: \\
+\quad 1.1. Алгоритм начинается с 0-ой вершины.(То есть (tmp$\_$located$\_$node) - 0,(tmp$\_$size) также равно 0,все вершины  в ( global$\_$color$\_$array) и (color$\_$array) обозначены как непосещённые). \\
+\includegraphics[ height=7.5cm]{it_1.png} \\
+\quad 1.2. Помечаем вершину,в которой мы сейчас находимся (tmp$\_$located$\_$node), как посещённую('1') в ( global$\_$color$\_$array) и (color$\_$array). \\
+\includegraphics[ height=7.5cm]{it_2.png} \\ 
+\quad 1.3. Если смежная с нашей вершиной вершина(1) не посещена в (color$\_$array): \\ \quad \quad 1.3.1. Заносим в (distance$\_$array) для данной смежной вершины значение (tmp$\_$size),увеличенное на 1. \\
+\quad \quad 1.3.2. Вызываем алгоритм с пункта 1.2.,только теперь (tmp$\_$located$\_$node) - уже смежная вершина,значения (color$\_$array),(distance$\_$array) глобально не изменяются. \\
+\quad 1.4. Помечаем вершину,в которой мы сейчас находимся (tmp$\_$located$\_$node), как посещённую('1') в ( global$\_$color$\_$array) и (color$\_$array). \\
+\textit{\quad B данном моменте алгоритм раздваивается и идёт сначала по пути 2 вершины и когда закончит выполнение,переходит к исследованию другой смежной вершины,то есть 5-ая.} \\
+\textbf{Первая ветка.} \\
+\quad 1.5. Если смежная с нашей вершиной вершина(2) не посещена в (color$\_$array): \\
+\quad \quad 1.5.1. Заносим в (distance$\_$array) для данной смежной вершины значение (tmp$\_$size),увеличенное на 1.\\
+\quad \quad 1.5.2. Вызываем алгоритм с пункта 1.2.,только теперь (tmp$\_$located$\_$node) - уже смежная вершина,значения (color$\_$array),(distance$\_$array) глобально не изменяются. \\
+\quad 1.6. Помечаем вершину,в которой мы сейчас находимся (tmp$\_$located$\_$node), как посещённую('1') в ( global$\_$color$\_$array) и (color$\_$array). \\
+\quad 1.7. Если смежная с нашей вершиной вершина(3) не посещена в (color$\_$array): \\
+\quad \quad 1.7.1. Заносим в (distance$\_$array) для данной смежной вершины значение (tmp$\_$size),увеличенное на 1.\\
+\quad \quad 1.7.2. Вызываем алгоритм с пункта 1.2.,только теперь (tmp$\_$located$\_$node) - уже смежная вершина,значения (color$\_$array),(distance$\_$array) глобально не изменяются. \\
+\end{flushleft}
+\begin{tabulary}{\linewidth}{}
+  \includegraphics[height=0.28\textheight]{it_3.png} 
+  &
+  \includegraphics[height=0.28\textheight]{it_4.png}
+   \\                                                     
+\end{tabulary}
+\begin{flushleft}
+\Large{\quad 1.8. Помечаем вершину,в которой мы сейчас находимся (tmp$\_$located$\_$node), как посещённую('1') в ( global$\_$color$\_$array) и (color$\_$array). \\
+\quad 1.9. Если смежная с нашей вершиной вершина(4) не посещена в (color$\_$array): \\
+\quad \quad 1.9.1. Заносим в (distance$\_$array) для данной смежной вершины значение (tmp$\_$size),увеличенное на 1.\\
+\quad \quad 1.9.2. Вызываем алгоритм с пункта 1.2.,только теперь (tmp$\_$located$\_$node) - уже смежная вершина,значения (color$\_$array),(distance$\_$array) глобально не изменяются. \\
+\quad 1.10. Помечаем вершину,в которой мы сейчас находимся (tmp$\_$located$\_$node), как посещённую('1') в ( global$\_$color$\_$array) и (color$\_$array). \\
+\quad 1.11. Если смежная с нашей вершиной вершина(6) не посещена в (color$\_$array): \\
+\quad \quad 1.11.1. Заносим в (distance$\_$array) для данной смежной вершины значение (tmp$\_$size),увеличенное на 1.\\
+\quad \quad 1.11.2. Вызываем алгоритм с пункта 1.2.,только теперь (tmp$\_$located$\_$node) - уже смежная вершина,значения (color$\_$array),(distance$\_$array) глобально не изменяются. \\
+\begin{tabulary}{\linewidth}{}
+  \includegraphics[height=0.28\textheight]{it_5.png} 
+  &
+  \includegraphics[height=0.28\textheight]{it_6.png}
+   \\                                                     
+\end{tabulary}
+\quad 1.12. Если смежная с нашей вершиной вершина(5) не посещена в (color$\_$array): \\
+\quad \quad 1.12.1. Заносим в (distance$\_$array) для данной смежной вершины значение (tmp$\_$size),увеличенное на 1.\\
+\quad \quad 1.12.2. Вызываем алгоритм с пункта 1.2.,только теперь (tmp$\_$located$\_$node) - уже смежная вершина,значения (color$\_$array),(distance$\_$array) глобально не изменяются. \\
+\quad 1.13. Помечаем вершину,в которой мы сейчас находимся (tmp$\_$located$\_$node), как посещённую('1') в ( global$\_$color$\_$array) и (color$\_$array). \\
+\quad 1.14. Если вершина,смежная с данной(tmp$\_$located$\_$node) является посещённой,то цикл найден,заносим размер цикла((tmp$\_$size),увеличенное на 1 и от которого отняли соответствующее для вершины,в которую мы пришли,расстояние(хранится в(distance$\_$array))) в (cycle$\_$sizes). \\}
+\begin{tabulary}{\linewidth}{}
+  \includegraphics[height=0.27\textheight]{it_7.png} 
+  &
+  \includegraphics[height=0.27\textheight]{it_8.png}
+   \\                                                     
+\end{tabulary}
+\end{flushleft} 
+\includegraphics[width = 14cm]{it_9.png} \\ \textit{Цикл найден.} \\
+\begin{flushleft}
+\Large{\textbf{Вторая ветка.}} \\
+\quad 1.15. Если смежная с нашей вершиной вершина(5) не посещена в (color$\_$array): \\
+\quad \quad 1.15.1. Заносим в (distance$\_$array) для данной смежной вершины значение (tmp$\_$size),увеличенное на 1.\\
+\quad \quad 1.15.2. Вызываем алгоритм с пункта 1.2.,только теперь (tmp$\_$located$\_$node) - уже смежная вершина. \\
+\quad 1.16. Помечаем вершину,в которой мы сейчас находимся (tmp$\_$located$\_$node), как посещённую('1') в ( global$\_$color$\_$array) и (color$\_$array). \\
+\quad 1.17. Если смежная с нашей вершиной вершина(3) не посещена в (color$\_$array): \\
+\quad \quad 1.17.1. Заносим в (distance$\_$array) для данной смежной вершины значение (tmp$\_$size),увеличенное на 1.\\
+\quad \quad 1.17.2. Вызываем алгоритм с пункта 1.2.,только теперь (tmp$\_$located$\_$node) - уже смежная вершина. \\
+\quad 1.18. Помечаем вершину,в которой мы сейчас находимся (tmp$\_$located$\_$node), как посещённую('1') в ( global$\_$color$\_$array) и (color$\_$array). \\
+\begin{tabulary}{\linewidth}{}
+  \includegraphics[height=0.27\textheight]{it_10.png} 
+  &
+  \includegraphics[height=0.27\textheight]{it_11.png}
+   \\                                                     
+\end{tabulary}
+\quad 1.19. Если смежная с нашей вершиной вершина(4) не посещена в (color$\_$array): \\
+\quad \quad 1.19.1. Заносим в (distance$\_$array) для данной смежной вершины значение (tmp$\_$size),увеличенное на 1.\\
+\quad \quad 1.19.2. Вызываем алгоритм с пункта 1.2.,только теперь (tmp$\_$located$\_$node) - уже смежная вершина. \\
+\quad 1.20. Помечаем вершину,в которой мы сейчас находимся (tmp$\_$located$\_$node), как посещённую('1') в ( global$\_$color$\_$array) и (color$\_$array). \\
+\quad 1.21. Если смежная с нашей вершиной вершина(6) не посещена в (color$\_$array): \\
+\quad \quad 1.21.1. Заносим в (distance$\_$array) для данной смежной вершины значение (tmp$\_$size),увеличенное на 1.\\
+\quad \quad 1.21.2. Вызываем алгоритм с пункта 1.2.,только теперь (tmp$\_$located$\_$node) - уже смежная вершина. \\
+\quad 1.22. Помечаем вершину,в которой мы сейчас находимся (tmp$\_$located$\_$node), как посещённую('1') в ( global$\_$color$\_$array) и (color$\_$array). \\
+\quad 1.23. Если вершина,смежная с данной(tmp$\_$located$\_$node) является посещённой,то цикл найден,заносим размер цикла((tmp$\_$size),увеличенное на 1 и от которого отняли соответствующее для вершины,в которую мы пришли,расстояние(хранится в(distance$\_$array))) в (cycle$\_$sizes). \\
+\end{flushleft}
+\begin{tabulary}{\linewidth}{}
+  \includegraphics[height=0.27\textheight]{it_12.png} 
+  &
+  \includegraphics[height=0.27\textheight]{it_13.png}
+   \\                                                     
+\end{tabulary}
+\includegraphics[width = 14cm]{it_14.png} \\ \textit{Цикл найден.}
+\begin{flushleft}
+\Large{\textbf{2.Проверка наличия циклов,не проходящих через нулевую вершину:}}\\
+\quad 2.1. Проверяем,все ли элементы в (global$\_$color$\_$array) отмечены как посещённые. \\
+\quad 2.2. Так как все элементы посещены,то 2 часть общего алгоритма завершает работу.
+\end{flushleft}
+\textbf{Список литературы} \\
+OSTIS GT [В Интернете] \\ База знаний по теории графов OSTIS \\
+GT. - 2011 r.. - \\
+http://ostisgraphstheo.sourceforge.net/index.php/Заглавная\_страница.
+
+\end{document}

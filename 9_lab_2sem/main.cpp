@@ -12,6 +12,7 @@ x≈-0.493435
 x≈0.493435
 x≈2.17806*/
 
+const double eps = 0.00001;
 
 double proizv_func(double x){
     double y;
@@ -19,23 +20,31 @@ double proizv_func(double x){
     return y;
 }
 
- double func(double x){
+double func(double x){
      double y;
      y = x*x - 10*(sin(x))*(sin(x)) + 2;
      return y;
  }
 
- double find_(double x,double eps){
+ double find_(double x){
      do{
         x = x - (func(x) / proizv_func(x));
      }while(fabs(func(x)) > eps);
-     cout << x << endl;
+     return x;
  }
+
+double main_func(double a , double b){
+    double tmp = a,h = 0.1;
+    while(tmp < b){
+        if(func(tmp)*func(tmp+h) < 0)
+            if(trunc(func(find_(tmp))*100000.0)/100000.0 == 0)
+                cout << find_(tmp) << endl;
+        tmp += h;
+    }
+}
 
 int main()
 {
-    find_(3,0.00001);
-    find_(0.7,0.00001);
-    find_(-0.1,0.00001);
+    main_func(-1,3);
     system("\nPause");
 }

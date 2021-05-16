@@ -1,57 +1,129 @@
 #include <SFML/Graphics.hpp>
-#include "Game.h"
+#include <time.h>
+using namespace sf;
+	int gridLogic[12][12];
+	int gridView[12][12];
+
+void open_all_sprites(int x,int y){
+        gridView[x][y] = gridLogic[x][y];
+        if (y > -1 && y > 0 && gridLogic[x][y + 1] == 0) open_all_sprites(x,y+1);
+        if (x > 1 && gridLogic[x - 1][y] == 0) open_all_sprites(x-1,y);
+        if (x > -1 &&gridLogic[x + 1][y] == 0) open_all_sprites(x+1,y);
+        if (y > 1 && gridLogic[x][y - 1] == 0) open_all_sprites(x,y-1);
+}
+
 
 int main()
 {
-	// Создаем окно размером 600 на 600 и частотой обновления 60 кадров в секунду
-	sf::RenderWindow window(sf::VideoMode(600, 600), "15");
-	window.setFramerateLimit(60);
+	// Генератор случайных чисел
+	srand(time(0));
 
-	sf::Font font;
-	font.loadFromFile("Calibri.ttf");
+	RenderWindow app(VideoMode(400, 400), "Minesweeper!");
+	// Ширина клетки
+	int w = 32;
 
-	// Текст с обозначением клавиш
-	sf::Text text("F2 - New Game / Esc - Exit / Arrow Keys - Move Tile", font, 20);
-	text.setFillColor(sf::Color::Cyan);
-	text.setPosition(5.f, 5.f);
+	for(int i = 0;i < 12;i++){
+        for(int j = 0;j < 12;j++)
+            printf("%d ",gridLogic[i][j]);
+	}
 
-	// Создаем объект игры
-	Game game;
-	game.setPosition(50.f, 50.f);
+	// Загрузка текстуры и создание спрайта
+	Texture t;
+	t.loadFromFile("images/tiles.jpg");
+	Sprite s(t);
 
-	sf::Event event;
-	int move_counter = 0;	// Счетчик случайных ходов для перемешивания головоломки
-
-	while (window.isOpen())
-	{
-		while (window.pollEvent(event))
+	for (int i = 1; i <= 10; i++)
+		for (int j = 1; j <= 10; j++)
 		{
-			if (event.type == sf::Event::Closed) window.close();
-			if (event.type == sf::Event::KeyPressed)
-			{
-				// Получаем нажатую клавишу - выполняем соответствующее действие
-				if (event.key.code == sf::Keyboard::Escape) window.close();
-				if (event.key.code == sf::Keyboard::Left) game.Move(Direction::Left);
-				if (event.key.code == sf::Keyboard::Right) game.Move(Direction::Right);
-				if (event.key.code == sf::Keyboard::Up) game.Move(Direction::Up);
-				if (event.key.code == sf::Keyboard::Down) game.Move(Direction::Down);
-				// Новая игра
-				if (event.key.code == sf::Keyboard::F2)
-				{
-					game.Init();
-					move_counter = 100;
-				}
-			}
+			gridView[i][j] = 10;
+			if (rand() % 5 == 0)  gridLogic[i][j] = 9;
+			else gridLogic[i][j] = 0;
 		}
 
-		// Если счетчик ходов больше нуля, продолжаем перемешивать головоломку
-		if (move_counter-- > 0) game.Move((Direction)(rand() % 4));
+	// Подсчет мин вокруг каждой клетки
+	for (int i = 1; i <= 10; i++)
+		for (int j = 1; j <= 10; j++)
+		{
+			int n = 0;
+			if (gridLogic[i][j] == 9) continue;
+			if (gridLogic[i + 1][j] == 9) n++;
+			if (gridLogic[i][j + 1] == 9) n++;
+			if (gridLogic[i - 1][j] == 9) n++;
+			if (gridLogic[i][j - 1] == 9) n++;
+			if (gridLogic[i + 1][j + 1] == 9) n++;
+			if (gridLogic[i - 1][j - 1] == 9) n++;
+			if (gridLogic[i - 1][j + 1] == 9) n++;
+			if (gridLogic[i + 1][j - 1] == 9) n++;
+			gridLogic[i][j] = n;
+		}
 
-		// Выполняем необходимые действия по отрисовке
-		window.clear();
-		window.draw(game);
-		window.draw(text);
-		window.display();
+	while (app.isOpen())
+	{
+		// Получаем координаты мышки относительно окна нашего приложения
+		Vector2i pos = Mouse::getPosition(app);
+		int x = pos.x / w;
+		int y = pos.y / w;
+
+		Event e;
+		while (app.pollEvent(e))
+		{
+			if (e.type == Event::Closed)
+                app.close();
+			if (e.type == Event::MouseButtonPressed){
+				// Если это - левая кнопка мыши, то открываем клетку
+				if (e.key.code == Mouse::Left){
+                        if(gridLogic[x][y] == 0){
+                            if (gridLogic[x-1][y] == 0){
+                                if(gridLogic[x-1][y+1] == 0){
+                                    if(gridLogic[x][y+1]){
+                                        open_all_sprites(x,y);
+                                    }
+                                }
+                                else if(gridLogic[x-1][y-1] == 0){
+                                    if(gridLogic[x][y-1] == 0){
+                                        open_all_sprites(x,y);
+                                    }
+                                }
+                            }
+                            else if (gridLogic[x+1][y] == 0){
+                                if(gridLogic[x+1][y+1] == 0){
+                                    if(gridLogic[x][y+1] == 0){
+                                        open_all_sprites(x,y);
+                                    }
+                                }
+                                else if(gridLogic[x+1][y-1] == 0){
+                                    if(gridLogic[x][y-1] == 0){
+                                        open_all_sprites(x,y);
+                                    }
+                                }
+                            }
+                        }
+                gridView[x][y] = gridLogic[x][y];
+				// Если это – правая кнопка мыши, то отображаем флажок
+				}
+				else if (e.key.code == Mouse::Right) gridView[x][y] = 11;
+            }
+		}
+
+		// Устанавливаем белый фон
+		app.clear(Color::White);
+
+		for (int i = 1; i <= 10; i++)
+			for (int j = 1; j <= 10; j++)
+			{
+				if (gridView[x][y] == 9) gridView[i][j] = gridLogic[i][j];
+
+				// Вырезаем из спрайта нужный нам квадратик текстуры
+				s.setTextureRect(IntRect(gridView[i][j] * w, 0, w, w));
+
+				// Устанавливаем его заданную позицию…
+				s.setPosition(i*w, j*w);
+
+				// … и отрисовываем
+				app.draw(s);
+			}
+		// Отображаем всю композицию на экране
+		app.display();
 	}
 
 	return 0;

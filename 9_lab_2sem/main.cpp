@@ -37,7 +37,6 @@ double main_func(double a , double b){
     double tmp = a,h = 0.1;
     while(tmp < b){
         if(func(tmp)*func(tmp+h) < 0)
-            if(trunc(func(find_(tmp))*100000.0)/100000.0 == 0)
                 cout << find_(tmp) << endl;
         tmp += h;
     }
@@ -46,5 +45,4 @@ double main_func(double a , double b){
 int main()
 {
     main_func(-1,3);
-    system("\nPause");
 }

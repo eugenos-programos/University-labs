@@ -1,31 +1,21 @@
 #include <SFML/Graphics.hpp>
 #include <time.h>
+#include <string>
+#include <windows.h>
 using namespace sf;
 	int gridLogic[12][12];
 	int gridView[12][12];
 
-void open_all_sprites(int x,int y){
-        gridView[x][y] = gridLogic[x][y];
-        if (y > -1 && y > 0 && gridLogic[x][y + 1] == 0) open_all_sprites(x,y+1);
-        if (x > 1 && gridLogic[x - 1][y] == 0) open_all_sprites(x-1,y);
-        if (x > -1 &&gridLogic[x + 1][y] == 0) open_all_sprites(x+1,y);
-        if (y > 1 && gridLogic[x][y - 1] == 0) open_all_sprites(x,y-1);
-}
-
 
 int main()
 {
+    start:
 	// Генератор случайных чисел
 	srand(time(0));
 
 	RenderWindow app(VideoMode(400, 400), "Minesweeper!");
 	// Ширина клетки
 	int w = 32;
-
-	for(int i = 0;i < 12;i++){
-        for(int j = 0;j < 12;j++)
-            printf("%d ",gridLogic[i][j]);
-	}
 
 	// Загрузка текстуры и создание спрайта
 	Texture t;
@@ -56,6 +46,7 @@ int main()
 			if (gridLogic[i + 1][j - 1] == 9) n++;
 			gridLogic[i][j] = n;
 		}
+		bool loose = false;
 
 	while (app.isOpen())
 	{
@@ -69,35 +60,12 @@ int main()
 		{
 			if (e.type == Event::Closed)
                 app.close();
+            if (Keyboard::isKeyPressed(Keyboard::F12)){
+                    goto start;
+            }
 			if (e.type == Event::MouseButtonPressed){
 				// Если это - левая кнопка мыши, то открываем клетку
 				if (e.key.code == Mouse::Left){
-                        if(gridLogic[x][y] == 0){
-                            if (gridLogic[x-1][y] == 0){
-                                if(gridLogic[x-1][y+1] == 0){
-                                    if(gridLogic[x][y+1]){
-                                        open_all_sprites(x,y);
-                                    }
-                                }
-                                else if(gridLogic[x-1][y-1] == 0){
-                                    if(gridLogic[x][y-1] == 0){
-                                        open_all_sprites(x,y);
-                                    }
-                                }
-                            }
-                            else if (gridLogic[x+1][y] == 0){
-                                if(gridLogic[x+1][y+1] == 0){
-                                    if(gridLogic[x][y+1] == 0){
-                                        open_all_sprites(x,y);
-                                    }
-                                }
-                                else if(gridLogic[x+1][y-1] == 0){
-                                    if(gridLogic[x][y-1] == 0){
-                                        open_all_sprites(x,y);
-                                    }
-                                }
-                            }
-                        }
                 gridView[x][y] = gridLogic[x][y];
 				// Если это – правая кнопка мыши, то отображаем флажок
 				}
@@ -111,7 +79,11 @@ int main()
 		for (int i = 1; i <= 10; i++)
 			for (int j = 1; j <= 10; j++)
 			{
-				if (gridView[x][y] == 9) gridView[i][j] = gridLogic[i][j];
+				if (gridView[x][y] == 9){
+                    gridView[i][j] = gridLogic[i][j];
+                    loose = true;
+
+				}
 
 				// Вырезаем из спрайта нужный нам квадратик текстуры
 				s.setTextureRect(IntRect(gridView[i][j] * w, 0, w, w));
@@ -122,9 +94,17 @@ int main()
 				// … и отрисовываем
 				app.draw(s);
 			}
+    if(loose == true){
+        Font font;
+        font.loadFromFile("Calibri.ttf");
+        Text text("Game is over!Type F12 to restart the game!", font, 30);
+        text.setColor(Color::Red);
+        app.draw(text);
+	}
 		// Отображаем всю композицию на экране
 		app.display();
 	}
+
 
 	return 0;
 }

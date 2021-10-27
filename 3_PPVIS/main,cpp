@@ -1,0 +1,26 @@
+#include "cell.h"
+#include "animal.h"
+#include "area.h"
+#include "Herbivore.h"
+#include "Rabbit.h"
+#include "Tiger.h"
+#include "zebra.h"
+#include <iostream>
+#include <vector>
+#include <random>
+#include <time.h>
+
+using namespace animal_world;
+
+int main(){
+
+    Area* area = Area::fill_cells_from_file("./example.txt");
+
+    int a = 4;
+    area->display_area();
+    srand(time(NULL));
+    while(a){
+        std::cin >> a;
+        area->next_step();
+    }
+}

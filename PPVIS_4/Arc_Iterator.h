@@ -11,10 +11,10 @@ namespace oriented_graph
     /*!
         \brief class that implements arc iterator
     */
-    class _ArcIterator : public std::iterator<std::bidirectional_iterator_tag, T>
+    class _ArcIterator
     {
     public:
-        typedef std::pair<T, T> value_type;
+        typedef typename traits::value_type value_type;
         typedef typename traits::const_reference const_reference;
         typedef typename traits::const_value const_value;
         typedef typename traits::pointer pointer;

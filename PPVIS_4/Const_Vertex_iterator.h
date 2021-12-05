@@ -41,6 +41,32 @@ namespace oriented_graph
         {
             return *this->_elemPosition;
         }
+
+        _ConstVertexIterator &operator++()
+        {
+            ++(this->_elemPosition);
+            return *this;
+        }
+
+        _ConstVertexIterator &operator++(int)
+        {
+            _ConstVertexIterator _tmpIter(*this);
+            operator++();
+            return _tmpIter;
+        }
+
+        _ConstVertexIterator &operator--()
+        {
+            --(this->_elemPosition);
+            return *this;
+        }
+
+        _ConstVertexIterator operator--(int)
+        {
+            _ConstVertexIterator _tmpIter(*this);
+            operator--();
+            return _tmpIter;
+        }
     };
 }
 #endif

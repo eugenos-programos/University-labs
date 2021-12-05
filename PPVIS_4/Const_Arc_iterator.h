@@ -41,6 +41,32 @@ namespace oriented_graph
         {
             return *(this->_arc);
         }
+
+        _ConstArcIterator &operator++()
+        {
+            ++this->_arc;
+            return *this;
+        }
+
+        _ConstArcIterator operator++(int)
+        {
+            _ConstArcIterator _tmpIter(*this);
+            ++this->_arc;
+            return *_tmpIter;
+        }
+
+        _ConstArcIterator &operator--()
+        {
+            --this->_arc;
+            return *this;
+        }
+
+        _ConstArcIterator operator--(int)
+        {
+            _ConstArcIterator _tmpIter(*this);
+            --this->_arc;
+            return _tmpIter;
+        }
     };
 }
 #endif //

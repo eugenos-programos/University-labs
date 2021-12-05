@@ -13,10 +13,10 @@ namespace oriented_graph
     /*!
         \brief class which realize vertex iterator
     */
-    class _VertexIterator : public std::iterator<std::bidirectional_iterator_tag, T>
+    class _VertexIterator 
     {
     public:
-        typedef T value_type;
+        typedef typename traits::value_type value_type;
         typedef typename traits::const_reference const_reference;
         typedef typename traits::reference reference;
         typedef typename traits::const_value const_value;
@@ -60,7 +60,7 @@ namespace oriented_graph
          */
         bool operator==(const _VertexIterator &_iter) const
         {
-            return *_elemPosition == *_iter._elemPosition;
+            return *_elemPosition == *_iter._elemPosition && _vertexList == _iter._vertexList;
         }
         /**
          * @brief  operator !=

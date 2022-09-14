@@ -60,3 +60,140 @@ WHERE speciality = 'ЭВМ'
 SELECT personal_number
 FROM teacher
 WHERE CHARINDEX('ЭВМ', speciality) != 0
+
+--
+SELECT subject_number
+FROM teacher_teaches_subjects_in_groups
+GROUP BY subject_number
+HAVING COUNT(group_number) = (
+  SELECT COUNT(DISTINCT group_number)
+  FROM teacher_teaches_subjects_in_groups
+)
+
+--
+SELECT DISTINCT surname
+FROM teacher
+INNER JOIN teacher_teaches_subjects_in_groups USING(personal_number)
+WHERE subject_number IN (
+  SELECT DISTINCT subject_number
+  FROM teacher_teaches_subjects_in_groups
+  WHERE personal_number = (
+    SELECT DISTINCT personal_number
+	FROM teacher_teaches_subjects_in_groups
+	WHERE subject_number = '14П'
+  )
+)
+
+--
+SELECT DISTINCT subject.*
+FROM subject
+INNER JOIN teacher_teaches_subjects_in_groups USING(subject_number)
+WHERE subject_number NOT IN (
+  SELECT subject_number
+  FROM teacher_teaches_subjects_in_groups
+  WHERE personal_number = '221Л'
+)
+
+--
+SELECT DISTINCT subject.*
+FROM subject
+INNER JOIN teacher_teaches_subjects_in_groups USING(subject_number)
+WHERE subject_number NOT IN (
+  SELECT subject_number
+  FROM teacher_teaches_subjects_in_groups
+  INNER JOIN student_group USING(group_number)
+  WHERE student_group.group_name = 'М-6'
+)
+
+--
+SELECT DISTINCT teacher.*
+FROM teacher 
+INNER JOIN teacher_teaches_subjects_in_groups USING(personal_number)
+WHERE position = 'Доцент' AND
+      teacher_teaches_subjects_in_groups.group_number IN ('3Г', '8Г')
+      
+--
+SELECT subject_number, personal_number, group_number
+FROM teacher_teaches_subjects_in_groups
+INNER JOIN teacher USING(personal_number)
+INNER JOIN student_group USING(group_number)
+WHERE CHARINDEX(teacher.department, 'ЭВМ') != 0 AND
+	  student_group.speciality = 'АСОИ'
+	  
+--
+SELECT DISTINCT group_number
+FROM student_group
+INNER JOIN teacher_teaches_subjects_in_groups USING(group_number)
+INNER JOIN teacher USING(personal_number)
+WHERE CHARINDEX(student_group.speciality, teacher.speciality) != 0
+
+--
+SELECT DISTINCT personal_number
+FROM teacher
+INNER JOIN teacher_teaches_subjects_in_groups USING(personal_number)
+INNER JOIN subject USING(subject_number)
+INNER JOIN student_group USING(group_number)
+WHERE teacher.department = 'ЭВМ' AND
+	  subject.speciality = student_group.speciality
+	  
+--
+SElECT DISTINCT student_group.speciality
+FROM student_group
+INNER JOIN teacher_teaches_subjects_in_groups USING(group_number)
+INNER JOIN teacher USING(personal_number)
+WHERE teacher.department = 'АСУ'
+
+--
+SELECT subject_number
+FROM teacher_teaches_subjects_in_groups
+INNER JOIN student_group USING(group_number)
+WHERE student_group.group_name = 'АС-8'
+
+--
+SELECT DISTINCT group_number
+FROM teacher_teaches_subjects_in_groups
+WHERE subject_number IN (
+  SELECT subject_number
+  FROM teacher_teaches_subjects_in_groups
+  INNER JOIN student_group USING(group_number)
+  WHERE student_group.group_name = 'АС-8'
+) AND group_number != (
+  SELECT group_number
+  FROM student_group
+  WHERE group_name = 'АС-8'
+)
+
+--
+SELECT DISTINCT group_number
+FROM teacher_teaches_subjects_in_groups
+EXCEPT
+SELECT DISTINCT group_number
+FROM teacher_teaches_subjects_in_groups
+WHERE subject_number IN (
+  SELECT subject_number
+  FROM teacher_teaches_subjects_in_groups
+  INNER JOIN student_group USING(group_number)
+  WHERE student_group.group_name = 'АС-8'
+) AND group_number != (
+  SELECT group_number
+  FROM student_group
+  WHERE group_name = 'АС-8'
+)
+
+--
+SELECt group_number
+FROM teacher_teaches_subjects_in_groups
+EXCEPT 
+SELECT group_number
+FROM teacher_teaches_subjects_in_groups
+WHERE personal_number = '430Л'
+
+--
+SELECT DISTINCT personal_number
+FROM teacher_teaches_subjects_in_groups
+INNER JOIN student_group USING(group_number)
+WHERE student_group.group_name = 'Э-15' 
+EXCEPT
+SELECT personal_number
+FROM teacher_teaches_subjects_in_groups
+WHERe subject_number = '12П'

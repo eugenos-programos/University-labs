@@ -1,67 +1,77 @@
---get data about all teachers
+--1. get data about all teachers
 SELECT * FROM teacher;
 
---get data abount all student groups where speciality is ECM 
+--2. get data about all student groups where speciality is ECM 
 SELECT * FROM student_group
 WHERE speciality = 'ЭВМ';
 
---get teacher personal key number and audience number where subject with number '18П' is taught
-SELECT personal_number, audience_number
+--3. get teacher personal key number and audience number where subject with number '18П' is taught
+SELECT DISTINCT personal_number, audience_number
 FROM teacher_teaches_subjects_in_groups
 WHERE subject_number = '18П'
 
---get subject number and name which are taught by 'Kostin' teacher
+--4. get subject number and name which are taught by 'Kostin' teacher
 SELECT DISTINCT teacher_teaches_subjects_in_groups.subject_number, subject.subject_name
 FROM teacher 
-INNER JOIN teacher_teaches_subjects_in_groups
-ON teacher.personal_number = teacher_teaches_subjects_in_groups.personal_number
-INNER JOIN subject
-ON teacher_teaches_subjects_in_groups.subject_number = subject.subject_number
+INNER JOIN teacher_teaches_subjects_in_groups USING(personal_number)
+INNER JOIN subject USING(subject_number)
 WHERE teacher.surname = 'Костин'
 
---get groups number in which 'Frolov' teacher teaches
-SELECT DISTINCT subject_number
+--5. get groups number in which 'Frolov' teacher teaches
+SELECT DISTINCT group_number
 FROM teacher_teaches_subjects_in_groups
 INNER JOIN teacher USING(personal_number)
 WHERE teacher.surname = 'Фролов'
 
---get information about the subjects that are conducted in the specialty of ASOI
-SELECT *
-FROM subject
-WHERE speciality = 'АСОИ';
+--6. get information about the subjects that are conducted in the specialty of ASOI
+SELECT DISTINCT subject.*
+FROM subject 
+INNER JOIN teacher_teaches_subjects_in_groups USING(subject_number)
+INNER JOIN student_group USING(group_number)
+WHERE student_group.speciality = 'АСОИ'
 
---get information about teachers who teach subjects in the specialty of ASOI
-SElECT *
+--7. get information about teachers who teach subjects in the specialty of ASOI
+SELECT DISTINCT teacher.*
 FROM teacher
-WHERE CHARINDEX('АСОИ', speciality) != 0
+INNER JOIN teacher_teaches_subjects_in_groups USING(personal_number)
+INNER JOIN student_group USING(group_number)
+WHERE student_group.speciality = 'АСОИ'
 
---get the names of teachers who teach subjects in 210 classrooms.
+--8. get the names of teachers who teach subjects in 210 classrooms.
 SELECT DISTINCT surname 
 FROM teacher
 INNER JOIN teacher_teaches_subjects_in_groups USING(personal_number)
 WHERE audience_number = 210
 
---get the names of subjects and the names of groups that teach classes in classrooms from 100 to 200.
+--9. get the names of subjects and the names of groups that teach classes in classrooms from 100 to 200.
 SELECT subject_name, student_group.group_name
 FROM subject
 INNER JOIN teacher_teaches_subjects_in_groups USING(subject_number)
 INNER JOIN student_group USING(group_number)
 WHERE teacher_teaches_subjects_in_groups.audience_number BETWEEN 100 AND 200
 
---Get pairs of group numbers from the same specialty.
+--10. Get pairs of group numbers from the same specialty.
+SELECT group_number
+FROM student_group
+WHERE speciality IN(
+SELECT speciality
+FROM student_group
+GROUP BY speciality
+HAVING COUNT(group_number) > 1)
 
-
---find the total number of student with ECM speciality
+--11. find the total number of student with ECM speciality
 SELECT SUM(number_of_people)
 FROM student_group
 WHERE speciality = 'ЭВМ'
 
---get the numbers of teachers teaching students in the ECM specialty.
+--12. get the numbers of teachers teaching students in the ECM specialty.
 SELECT personal_number
 FROM teacher
-WHERE CHARINDEX('ЭВМ', speciality) != 0
+INNER JOIN teacher_teaches_subjects_in_groups USING(personal_number)
+INNER JOIN student_group USING(group_number)
+WHERE student_group.speciality = 'ЭВМ'
 
---
+--13. get number of the subjects that are studied by all groups
 SELECT subject_number
 FROM teacher_teaches_subjects_in_groups
 GROUP BY subject_number
@@ -70,7 +80,7 @@ HAVING COUNT(group_number) = (
   FROM teacher_teaches_subjects_in_groups
 )
 
---
+--14. get the names of teachers teaching the same subjects as the teacher teaching the subject with the number 14P
 SELECT DISTINCT surname
 FROM teacher
 INNER JOIN teacher_teaches_subjects_in_groups USING(personal_number)
@@ -79,40 +89,40 @@ WHERE subject_number IN (
   FROM teacher_teaches_subjects_in_groups
   WHERE personal_number = (
     SELECT DISTINCT personal_number
-	FROM teacher_teaches_subjects_in_groups
-	WHERE subject_number = '14П'
+    FROM teacher_teaches_subjects_in_groups
+    WHERE subject_number = '14П'
   )
 )
 
---
+--15. Get information about subjects that are not taught by a teacher with a personal number 221P 
 SELECT DISTINCT subject.*
 FROM subject
 INNER JOIN teacher_teaches_subjects_in_groups USING(subject_number)
 WHERE subject_number NOT IN (
-  SELECT subject_number
+  SELECT DISTINCT subject_number
   FROM teacher_teaches_subjects_in_groups
   WHERE personal_number = '221Л'
 )
 
---
+--16. get information about subjects that are not studied by M-6 group
 SELECT DISTINCT subject.*
 FROM subject
 INNER JOIN teacher_teaches_subjects_in_groups USING(subject_number)
 WHERE subject_number NOT IN (
-  SELECT subject_number
+  SELECT DISTINCT subject_number
   FROM teacher_teaches_subjects_in_groups
   INNER JOIN student_group USING(group_number)
   WHERE student_group.group_name = 'М-6'
 )
 
---
+--17. get information about docents that are teach in '3Г' and '8Г' groups
 SELECT DISTINCT teacher.*
 FROM teacher 
 INNER JOIN teacher_teaches_subjects_in_groups USING(personal_number)
 WHERE position = 'Доцент' AND
       teacher_teaches_subjects_in_groups.group_number IN ('3Г', '8Г')
       
---
+--18. get the numbers of subjects, numbers of teachers, numbers of groups in which teachers from the computer department with the specialty of ASOI teach classes
 SELECT subject_number, personal_number, group_number
 FROM teacher_teaches_subjects_in_groups
 INNER JOIN teacher USING(personal_number)
@@ -120,14 +130,14 @@ INNER JOIN student_group USING(group_number)
 WHERE CHARINDEX(teacher.department, 'ЭВМ') != 0 AND
 	  student_group.speciality = 'АСОИ'
 	  
---
+--19. get group number with same speciality as they teachers have
 SELECT DISTINCT group_number
 FROM student_group
 INNER JOIN teacher_teaches_subjects_in_groups USING(group_number)
 INNER JOIN teacher USING(personal_number)
 WHERE CHARINDEX(student_group.speciality, teacher.speciality) != 0
 
---
+--20. get the numbers of teachers from the computer department who teach subjects in the specialty that coincides with the specialty of the student group
 SELECT DISTINCT personal_number
 FROM teacher
 INNER JOIN teacher_teaches_subjects_in_groups USING(personal_number)
@@ -136,20 +146,20 @@ INNER JOIN student_group USING(group_number)
 WHERE teacher.department = 'ЭВМ' AND
 	  subject.speciality = student_group.speciality
 	  
---
+--21. get the specialties of the student group, where the teachers of the ACS department work
 SElECT DISTINCT student_group.speciality
 FROM student_group
 INNER JOIN teacher_teaches_subjects_in_groups USING(group_number)
 INNER JOIN teacher USING(personal_number)
 WHERE teacher.department = 'АСУ'
 
---
+--22. get subject numbers that are taught by 'АС-8' group
 SELECT subject_number
 FROM teacher_teaches_subjects_in_groups
 INNER JOIN student_group USING(group_number)
 WHERE student_group.group_name = 'АС-8'
 
---
+--23. get 
 SELECT DISTINCT group_number
 FROM teacher_teaches_subjects_in_groups
 WHERE subject_number IN (

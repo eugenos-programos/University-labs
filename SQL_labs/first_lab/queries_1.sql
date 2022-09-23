@@ -51,7 +51,7 @@ INNER JOIN student_group USING(group_number)
 WHERE teacher_teaches_subjects_in_groups.audience_number BETWEEN 100 AND 200
 
 --10. Get pairs of group numbers from the same specialty.
-SELECT group_number
+SELECT group_number, speciality
 FROM student_group
 WHERE speciality IN(
 SELECT speciality
@@ -159,7 +159,7 @@ FROM teacher_teaches_subjects_in_groups
 INNER JOIN student_group USING(group_number)
 WHERE student_group.group_name = 'АС-8'
 
---23. get 
+--23. get the numbers of student groups that study the same subjects as the AC-8 student group
 SELECT DISTINCT group_number
 FROM teacher_teaches_subjects_in_groups
 WHERE subject_number IN (
@@ -173,10 +173,11 @@ WHERE subject_number IN (
   WHERE group_name = 'АС-8'
 )
 
---
-SELECT DISTINCT group_number
+--24. get the numbers of student groups that study the same subjects as the AC-8 student group
+SELECT group_number
 FROM teacher_teaches_subjects_in_groups
-EXCEPT
+WHERE group_number NOT IN 
+(
 SELECT DISTINCT group_number
 FROM teacher_teaches_subjects_in_groups
 WHERE subject_number IN (
@@ -184,13 +185,10 @@ WHERE subject_number IN (
   FROM teacher_teaches_subjects_in_groups
   INNER JOIN student_group USING(group_number)
   WHERE student_group.group_name = 'АС-8'
-) AND group_number != (
-  SELECT group_number
-  FROM student_group
-  WHERE group_name = 'АС-8'
+)
 )
 
---
+--25. get the numbers of student groups that do not study the subjects taught by the teacher 430L.
 SELECt group_number
 FROM teacher_teaches_subjects_in_groups
 EXCEPT 
@@ -198,7 +196,7 @@ SELECT group_number
 FROM teacher_teaches_subjects_in_groups
 WHERE personal_number = '430Л'
 
---
+--26. get the numbers of teachers working with the E-15 group, but not teaching the 12P subject.
 SELECT DISTINCT personal_number
 FROM teacher_teaches_subjects_in_groups
 INNER JOIN student_group USING(group_number)

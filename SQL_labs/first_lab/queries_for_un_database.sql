@@ -51,13 +51,12 @@ INNER JOIN student_group USING(group_number)
 WHERE teacher_teaches_subjects_in_groups.audience_number BETWEEN 100 AND 200
 
 --10. Get pairs of group numbers from the same specialty.
-SELECT group_number, speciality
-FROM student_group
-WHERE speciality IN(
-SELECT speciality
-FROM student_group
-GROUP BY speciality
-HAVING COUNT(group_number) > 1)
+SELECT num1.group_number AS `first`, num2.group_number AS `second`
+FROM student_group AS num1 INNER JOIN student_group AS num2 ON num1.group_number != num2.group_number
+INNER JOIN student_group AS num11 ON num11.group_number = num1.group_number
+INNER JOIN student_group AS num22 ON num22.group_number = num2.group_number
+WHERE (num11.speciality = num22.speciality AND num11.group_number < num22.group_number);
+
 
 --11. find the total number of student with ECM speciality
 SELECT SUM(number_of_people)

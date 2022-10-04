@@ -10,7 +10,7 @@ FROM spj
 WHERE d IN (
 SELECT DISTINCT d
 FROM spj
-WHERE p = 'П1'
+WHERE p = 'П1')
 
 -- 4. Get all shipments where the quantity is in the range from 300 to 750 inclusive.
 SELECT *
@@ -23,8 +23,8 @@ FROM spj
 INNER JOIN details_p USING(d)
 INNER JOIN project_g USING(pr)
 INNER JOIN suppliers_p USING(p)
-WHERE suppliers_p.city != project_g.city AND 
-      suppliers_p.city != details_p.city AND
+WHERE suppliers_p.city != project_g.city OR
+      suppliers_p.city != details_p.city OR
       details_p.city != project_g.city
       
 -- 16. Get the total number of details D1 supplied by supplier P1.
@@ -70,8 +70,8 @@ FROM spj
 INNER JOIN details_p USING(d)
 INNER JOIN project_g USING(pr)
 INNER JOIN suppliers_p USING(p)
-WHERE suppliers_p.city != project_g.city OR 
-      suppliers_p.city != details_p.city OR
+WHERE suppliers_p.city != project_g.city AND
+      suppliers_p.city != details_p.city AND
       details_p.city != project_g.city
 
 -- 28. Get project numbers for which red parts are not supplied by suppliers from London.
@@ -80,5 +80,6 @@ FROM spj
 INNER JOIN suppliers_p USING(p)
 INNER JOIN details_p USING(d)
 WHERE details_p.color != 'Красный' AND
-	  suppliers_p.city != 'Лондон'
+      suppliers_p.city != 'Таллинн'
+
       

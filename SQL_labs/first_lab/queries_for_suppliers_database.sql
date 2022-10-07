@@ -5,12 +5,13 @@ INNER JOIN suppliers_p USING(p)
 INNER JOIN project_g USING(pr)
 
 -- 32. Get the project numbers provided by at least all the details of the supplier P1.
-SELECT DISTINCT pr
+SELECT pr
 FROM spj
-WHERE d IN (
-SELECT DISTINCT d
-FROM spj
-WHERE p = 'П1')
+GROUP BY pr, p
+HAVING COUNT(DISTINCT d) = (
+SELECT COUNT(DISTINCT d)
+  FROM spj
+  WHERE p = 'П1') AND p = 'П1'
 
 -- 4. Get all shipments where the quantity is in the range from 300 to 750 inclusive.
 SELECT *

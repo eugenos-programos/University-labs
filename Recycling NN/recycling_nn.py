@@ -57,11 +57,13 @@ class Matrix():
         return Matrix(res_raw_matrix)
 
     def __str__(self) -> str:
-        return str(self.M)
+        result = ""
+        for row_index in range(self.shape[0]):
+            result += str(self.M[row_index]) + '\n'
+        return result
 
     def element_wise_mult(self, other_matrix):
         res_raw_matrix = get_random_matrix(self.shape)
-        print(self.shape, other_matrix.shape)
         for row_index in range(self.shape[0]):
             for col_index in range(self.shape[1]):
                 res_raw_matrix[row_index][col_index] = self.M[row_index][col_index] * other_matrix.M[0][col_index]
@@ -82,28 +84,43 @@ class RecyclingNN():
             "W2" : Matrix(shape=(sec_layer_size, input_neuron_n))
         }
         self.alpha = alpha
-        self.activation_function = lambda x: x
+        self.activation_function = lambda x: self.__relu__(x)
+
+    def __relu__(self, X : Matrix) -> Matrix:
+        res_row_matrix = get_random_matrix(X.shape)
+        for row_index in range(X.shape[0]):
+            for col_index in range(X.shape[1]):
+                input_ = X.M[row_index][col_index]
+                res_row_matrix[row_index][col_index] = input_ if input_ >= 0. else 0.
+        return Matrix(res_row_matrix)
+
+    def __relu_der__(self, X : Matrix) -> Matrix:
+        res_row_matrix = get_random_matrix(X.shape)
+        for row_index in range(X.shape[0]):
+            for col_index in range(X.shape[1]):
+                res_row_matrix[row_index][col_index] = 1 if X.M[row_index][col_index] > 0 else 0
+        return Matrix(res_row_matrix)
 
     def backprop(self, X, y, *args: Any, **kwds: Any):
         W1, W2 = self.weights.values()
-        y_pred, A1 = self.forward(X, True)
+        y_pred, A1, Z1 = self.forward(X, return_cache=True)
         dZ2 = y_pred - y    # (100, 1)
         dW2 = dZ2 * A1.T    # (100, 1) x (1, 50) = (100, 50)
 
-        dZ1 = (W2 * dZ2).element_wise_mult()   # (50, 100) @ (100, 1) = (50, 1)
+        dZ1 = (W2 * dZ2).element_wise_mult(self.__relu_der__(Z1))   # (50, 100) @ (100, 1) = (50, 1)
         dW1 = dZ1 * X.T      # (50, 1) @ (1, 100) = (50, 100)
         W1_new = W1 - self.alpha * dW1.T
         W2_new = W2 - self.alpha * dW2.T
         self.weights['W1'] = W1_new
         self.weights['W2'] = W2_new
 
-    def forward(self, X, return_activations=False, *args: Any, **kwds: Any):
+    def forward(self, X, return_cache=False, *args: Any, **kwds: Any):
         Z1 = self.weights["W1"].T * X
         A1 = self.activation_function(Z1)
         Z2 = self.weights["W2"].T * A1
         A2 = self.activation_function(Z2)
-        if return_activations:
-            return A2, A1
+        if return_cache:
+            return A2, A1, Z1
         return A2
     
     def compute_cost(self, X, func='MAE'):
@@ -117,7 +134,4 @@ class RecyclingNN():
 
 model = RecyclingNN(100, 2)
 X = Matrix(shape=(100, 1))
-print(model.compute_cost(X))
-for _ in range(5):
-    model.backprop(X, X)
-print(model.compute_cost(X))
+model.backprop(X, X)

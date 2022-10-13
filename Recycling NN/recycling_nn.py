@@ -1,17 +1,22 @@
 import random
 from typing import Any
+import matplotlib.pyplot as plt
+import numpy as np
+import cv2
 
 
 def get_random_matrix(shape : tuple) -> list:
     if len(shape) != 2:
         raise ValueError("Matrix should be two-dimensional")
-    matrix = [[random.random() * 10 for _ in range(shape[1])] for _ in range(shape[0])]
+    print(shape)
+    matrix = np.random.uniform(low=-.3, high=.3, size=shape)
     return matrix
 
 class Matrix():
     def __init__(self, raw_matrix : list = None, shape : tuple = None, for_transp=False, *args: Any, **kwds: Any) -> None:
         if shape is not None:
             raw_matrix = get_random_matrix(shape)
+        print("here")
         self.M = raw_matrix
         self.__n_rows__ = len(raw_matrix)
         self.__n_columns__ = len(raw_matrix[0])
@@ -74,14 +79,15 @@ class Matrix():
         for row_index in range(self.shape[0]):
             sum_res += sum(self.M[row_index])
         return sum_res
-    
+
 class RecyclingNN():
-    def __init__(self, input_neuron_n : int, compression_factor : int, alpha : float = .001, *args: Any, **kwds: Any) -> None:
+    def __init__(self, img_size : int = 256, compression_factor : int = 16, alpha : float = .1, *args: Any, **kwds: Any) -> None:
         self.compression_factor = compression_factor
-        sec_layer_size = int(input_neuron_n / compression_factor)
+        first_layer_size = img_size ** 2 * 3
+        sec_layer_size = (img_size // compression_factor) ** 2 * 3
         self.weights = {
-            "W1" : Matrix(shape=(input_neuron_n, sec_layer_size)), 
-            "W2" : Matrix(shape=(sec_layer_size, input_neuron_n))
+            "W1" : Matrix(shape=(first_layer_size, sec_layer_size)), 
+            "W2" : Matrix(shape=(sec_layer_size, first_layer_size))
         }
         self.alpha = alpha
         self.activation_function = lambda x: self.__relu__(x)
@@ -126,12 +132,29 @@ class RecyclingNN():
     def compute_cost(self, X, func='MAE'):
         y_pred = self.forward(X)
         cost = y_pred - X
-        return cost.sum()
+        return abs(cost.sum())
  
     def __call__(self, X : list, *args: Any, **kwds: Any) -> Any:
         return self.forward(X)
 
+def convert_image_to_matrix(path : str):
+    img = list(cv2.imread(path).reshape((256 ** 2 * 3, 1)))
+    return Matrix(img)
 
-model = RecyclingNN(100, 2)
-X = Matrix(shape=(100, 1))
-model.backprop(X, X)
+model = RecyclingNN()
+X = convert_image_to_matrix('/home/eug/University-labs/Recycling NN/cat_paper.png')
+
+#losses = []
+#for _ in range(1):
+#    model.backprop(X, X)
+#    losses.append(model.compute_cost(X, X))
+
+
+'''
+fig.add_subplot(1, 2, 1)
+plt.imshow(X_im)
+print(losses[-1])
+fig.add_subplot(1, 2, 2)
+plt.imshow(im_pred)
+plt.show()
+'''

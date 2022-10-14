@@ -18,8 +18,9 @@ class Matrix
         static float** get_random_matrix(int n_rows, int n_cols);
         Matrix& operator * (const Matrix& other);
         Matrix& operator - (const Matrix& other);
-        Matrix& operator * (const int& number);
+        Matrix& operator * (const float& number);
         Matrix * T();
+        Matrix * element_wise_mult(Matrix * other);
 };
 
 float ** Matrix::get_random_matrix(int n_rows, int n_cols)
@@ -60,6 +61,10 @@ void Matrix::print_matrix()
 
 Matrix& Matrix::operator*(const Matrix& other_m)
 {
+    if (this->n_cols != other_m.n_rows)
+    {
+        throw "Incorrect matrix shapes for element wise multiplication";
+    }
     Matrix * result_matrix = new Matrix(this->n_rows, other_m.n_cols);
     for (int first_m_row_index = 0; first_m_row_index < this->n_rows; ++first_m_row_index)
     {
@@ -76,21 +81,25 @@ Matrix& Matrix::operator*(const Matrix& other_m)
     return *result_matrix;
 }
 
-Matrix& Matrix::operator * (const int& number)
+Matrix& Matrix::operator * (const float& number)
 {
     Matrix * result_matrix = new Matrix(this->n_rows, this->n_cols);
     for (int row_index = 0; row_index < this->n_rows; ++row_index)
     {
         for (int col_index = 0; col_index < this->n_cols; ++col_index)
         {
-            result_matrix->matrix[row_index][col_index] = this->matrix[row_index][col_index] * number*;
+            result_matrix->matrix[row_index][col_index] = this->matrix[row_index][col_index] * number;
         }
     }
-    return result_matrix;
+    return *result_matrix;
 }
 
 Matrix& Matrix::operator-(const Matrix& other_m)
 {
+    if (this->n_rows != other_m.n_rows || this->n_cols != other_m.n_cols)
+    {
+        throw "Incorrect matrix shapes for element wise multiplication";
+    }
     Matrix * result_matrix = new Matrix(this->n_rows, this->n_cols);
     for (int row_index = 0; row_index < this->n_rows; ++row_index)
     {
@@ -99,7 +108,7 @@ Matrix& Matrix::operator-(const Matrix& other_m)
             result_matrix->matrix[row_index][col_index] = this->matrix[row_index][col_index] - other_m.matrix[row_index][col_index];
         }
     }
-    return result_matrix;
+    return *result_matrix;
 }
 
 
@@ -116,13 +125,29 @@ Matrix * Matrix::T()
     return result_matrix;
 }
 
+Matrix * Matrix::element_wise_mult(Matrix * other)
+{
+    if (this->n_rows != other->n_rows || this->n_cols != other->n_cols)
+    {
+        throw "Incorrect matrix shapes for element wise multiplication";
+    }
+    Matrix * result_matrix = new Matrix(this->n_cols, this->n_rows);
+    for (int row_index = 0; row_index < this->n_rows; ++row_index)
+    {
+        for (int col_index = 0; col_index < this->n_cols; ++col_index)
+        {
+            result_matrix->matrix[col_index][row_index] = this->matrix[row_index][col_index] * other->matrix[0][col_index];
+        }
+    }  
+    return result_matrix;
+}
 
 class RecyclingNN
 {
     private:
         Matrix ** weights;
         int compress_coeff;
-        int alpha;
+        float alpha;
         Matrix * relu(Matrix * X);
         Matrix * relu_der(Matrix * X);
     public:
@@ -151,12 +176,24 @@ Matrix * RecyclingNN::relu(Matrix * X)
     {
         for (int col_index = 0; col_index < X->n_cols; ++col_index)
         {
-            res_matrix->matrix[row_index][col_index] = X->matrix[row_index][col_index] > 0 ? 1. : 0.;
+            res_matrix->matrix[row_index][col_index] = X->matrix[row_index][col_index] > 0 ? X->matrix[row_index][col_index] : 0.;
         }
     }
     return res_matrix;
 }
 
+Matrix * RecyclingNN::relu_der(Matrix * X)
+{
+    Matrix * res_matrix = new Matrix(X->n_rows, X->n_cols);
+    for (int row_index = 0; row_index < X->n_rows; ++row_index)
+    {
+        for (int col_index = 0; col_index < X->n_cols; ++col_index)
+        {
+            res_matrix->matrix[row_index][col_index] = X->matrix[row_index][col_index] > 0 ? 1. : 0.;
+        }
+    }
+    return res_matrix;  
+}
 
 Matrix ** RecyclingNN::forward(Matrix * X, bool return_cache)
 {
@@ -185,12 +222,12 @@ void RecyclingNN::backprop(Matrix * X)
     Matrix * A1 = out[1];
     Matrix * Z1 = out[2];
     
-    Matrix * dZ2 = y_pred - X;
-    Matrix * dW2 = dZ2 * A1->T();
-    Matrix * dZ1 = (W2 * dZ2) * this->relu_der(Z1);
-    Matrix * dW1 = dZ1 * X->T();
-    this->weights[0] = W1 - this->alpha * dW1->T();
-    this->weights[1] = W2 - this->alpha * dW2->T();
+    Matrix * dZ2 = &(*y_pred - *X);
+    Matrix * dW2 = &(*dZ2 * *A1->T());
+    Matrix * dZ1 = (*W2 * *dZ2).element_wise_mult(this->relu_der(Z1));
+    Matrix * dW1 = &(*dZ1 * *X->T());
+    this->weights[0] = &(*W1 - *dW1->T() * this->alpha);
+    this->weights[1] = &(*W2 - *dW2->T() * this->alpha);
 }
 
 Matrix * RecyclingNN::operator()(Matrix * X) 
@@ -202,7 +239,6 @@ Matrix * RecyclingNN::operator()(Matrix * X)
 int main(){
     Matrix * X = new Matrix(196608, 1);
     RecyclingNN * model_ = new RecyclingNN();
-    Matrix * out = (*model_)(X);
 
     return 0;
 }

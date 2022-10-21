@@ -81,6 +81,6 @@ FROM spj
 INNER JOIN suppliers_p USING(p)
 INNER JOIN details_p USING(d)
 WHERE details_p.color != 'Красный' AND
-      suppliers_p.city != 'Таллинн'
+      suppliers_p.city == 'Таллинн'
 
       
